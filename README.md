@@ -7,5 +7,5 @@
                                  npm run dev (this command launch both client side & server side) 
 
 
-##Database used: 
+## Database used: 
                                 Mongodb Clound
