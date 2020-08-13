@@ -10,34 +10,32 @@ import thunderStormIcon from '../Resources/thunderStorm.png'
 
 import axios from 'axios'
 
-var index = 0
-var currentCity = ''
 var cities = ['Sydney', 'Brisbane', 'Melbourne']
 
 const Weather = () => {
   const [weather, setWeather] = useState('')
+  const [index, setIndex] = useState(0)
   const getWeather = async cityName => {
+    console.log(cityName)
     const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      },
       params: {
         city: cityName
       }
     }
     try {
-      currentCity = cityName
       const res = await axios.get('/weather', config)
-
-      setWeather({
-        ...weather,
-        [cityName]: {
-          description: res.data.result.description,
-          lowestTemperature: res.data.result.lowestTemperature,
-          highestTemperature: res.data.result.highestTemperature,
-          currentTemperature: res.data.result.currentTemperature
-        }
-      })
+      if (!weather[cityName]) {
+        console.log('here you go')
+        setWeather({
+          ...weather,
+          [cityName]: {
+            description: res.data.result.description,
+            lowestTemperature: res.data.result.lowestTemperature,
+            highestTemperature: res.data.result.highestTemperature,
+            currentTemperature: res.data.result.currentTemperature
+          }
+        })
+      }
     } catch (err) {
       console.error(err)
     }
@@ -60,23 +58,21 @@ const Weather = () => {
     }
   }
   const handleRightClick = () => {
-    currentCity = ''
     if (index >= 2) {
-      index = 0
-      getWeather(cities[index])
+      setIndex(0)
+      getWeather(cities[0])
     } else {
-      index++
-      getWeather(cities[index])
+      setIndex(index + 1)
+      getWeather(cities[index + 1])
     }
   }
   const handleLeftClick = () => {
-    currentCity = ''
     if (index <= 0) {
-      index = 2
-      getWeather(cities[index])
+      setIndex(2)
+      getWeather(cities[2])
     } else {
-      index--
-      getWeather(cities[index])
+      setIndex(index - 1)
+      getWeather(cities[index - 1])
     }
   }
 
@@ -96,8 +92,8 @@ const Weather = () => {
           ></img>
         </button>
 
-        {weather[currentCity] ? (
-          handleImage(weather[currentCity].description)
+        {weather[cities[index]] ? (
+          handleImage(weather[cities[index]].description)
         ) : (
           <img src={refreshIcon} alt={'refresh'} style={style.centerImage} />
         )}
@@ -110,24 +106,24 @@ const Weather = () => {
         </button>
       </div>
       <div style={style.currentTemperature}>
-        {weather[currentCity]
-          ? weather[currentCity].currentTemperature + '°C'
+        {weather[cities[index]]
+          ? weather[cities[index]].currentTemperature + '°C'
           : ''}
       </div>
       <div style={{ display: 'block' }}>
         <div style={style.lowestTemperature}>
-          {weather[currentCity]
-            ? weather[currentCity].lowestTemperature + '°C'
+          {weather[cities[index]]
+            ? weather[cities[index]].lowestTemperature + '°C'
             : ''}
         </div>
         <div style={style.highestTemperature}>
-          {weather[currentCity]
-            ? weather[currentCity].highestTemperature + '°C'
+          {weather[cities[index]]
+            ? weather[cities[index]].highestTemperature + '°C'
             : ''}
         </div>
       </div>
       <div style={style.description}>
-        {weather[currentCity] ? weather[currentCity].description : ''}
+        {weather[cities[index]] ? weather[cities[index]].description : ''}
       </div>
     </div>
   )
